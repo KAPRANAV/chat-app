@@ -120,6 +120,8 @@ function Tennis({ socket, opponentId, role }: any) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    let lastEmit = 0;
+
     const update = () => {
       const ball = ballRef.current;
       
@@ -137,7 +139,12 @@ function Tennis({ socket, opponentId, role }: any) {
           socket.emit('game-move-special', { to: opponentId, game: 'tennis-score', data: { winner } });
           ball.x = 300; ball.y = 200;
         }
-        socket.emit('game-move-special', { to: opponentId, game: 'tennis-ball', data: { x: ball.x, y: ball.y } });
+        
+        const now = Date.now();
+        if (now - lastEmit > 30) {
+          socket.emit('game-move-special', { to: opponentId, game: 'tennis-ball', data: { x: ball.x, y: ball.y } });
+          lastEmit = now;
+        }
       }
 
       ctx.fillStyle = '#000';

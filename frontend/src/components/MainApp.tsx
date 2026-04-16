@@ -4,7 +4,7 @@ import Peer from 'peerjs';
 import { 
   MessageSquare, UserCircle, Search, LogOut, 
   Video, Gamepad2,
-  Bell
+  Bell, X
 } from 'lucide-react';
 import ChatRoom from './ChatRoom';
 import GameStage from './GameStage';
@@ -51,7 +51,13 @@ export default function MainApp({ user, socket, peer }: { user: any, socket: Soc
 
   // Save messages to local storage
   useEffect(() => {
-    localStorage.setItem('social_app_messages_' + user.id, JSON.stringify(allMessages));
+    const limitedMessages = { ...allMessages };
+    for (const key in limitedMessages) {
+      if (limitedMessages[key].length > 50) {
+        limitedMessages[key] = limitedMessages[key].slice(-50);
+      }
+    }
+    localStorage.setItem('social_app_messages_' + user.id, JSON.stringify(limitedMessages));
   }, [allMessages, user.id]);
 
   useEffect(() => {
@@ -185,7 +191,8 @@ export default function MainApp({ user, socket, peer }: { user: any, socket: Soc
 
       if (!isIncoming) {
         socket.emit('initiate-call', { to: activeChat.id, peerId: peer.id, type });
-        const call = peer.call(incomingPeerId || '', stream);
+      } else if (incomingPeerId) {
+        const call = peer.call(incomingPeerId, stream);
         currentCallRef.current = call;
         call.on('stream', (remoteStream) => {
           setCallState(prev => ({ ...prev, remoteStream }));
@@ -250,6 +257,9 @@ export default function MainApp({ user, socket, peer }: { user: any, socket: Soc
               <h3 style={{ fontSize: '1rem', fontWeight: 'bold' }}>{user.name}</h3>
               <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{user.id}</p>
             </div>
+            <button className="mobile-close-btn" onClick={() => setIsSidebarOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'white' }}>
+              <X size={18} />
+            </button>
             <button 
               onClick={() => setShowRequests(!showRequests)} 
               title="Friend Requests"
@@ -340,7 +350,7 @@ export default function MainApp({ user, socket, peer }: { user: any, socket: Soc
       </div>
 
       {/* Main Chat Area */}
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
         {activeChat ? (
           <ChatRoom 
             user={user} 
@@ -468,6 +478,9 @@ export default function MainApp({ user, socket, peer }: { user: any, socket: Soc
           onClose={() => setActiveGame(null)} 
         />
       )}
+      <style>{`
+        @media (min-width: 769px) { .mobile-close-btn { display: none !important; } }
+      `}</style>
     </div>
   );
 }

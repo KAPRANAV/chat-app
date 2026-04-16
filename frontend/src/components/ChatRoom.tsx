@@ -62,8 +62,8 @@ export default function ChatRoom({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      onToast({ title: 'Upload Failed', content: 'File too large. Max size is 10MB.' });
+    if (file.size > 2 * 1024 * 1024) {
+      onToast({ title: 'Upload Failed', content: 'File too large. Max size is 2MB.' });
       return;
     }
 
@@ -144,8 +144,8 @@ export default function ChatRoom({
             position: 'relative'
           }}>
             {m.type === 'text' && <div>{m.content}</div>}
-            {m.type === 'image' && <img src={m.mediaUrl || ''} style={{ maxWidth: '100%', borderRadius: '8px', marginBottom: '0.25rem' }} alt="Sent image" />}
-            {m.type === 'video' && <video src={m.mediaUrl || ''} controls style={{ maxWidth: '100%', borderRadius: '8px', marginBottom: '0.25rem' }} />}
+            {m.type === 'image' && <img src={m.mediaUrl || ''} style={{ maxWidth: '100%', maxHeight: '250px', objectFit: 'contain', flexShrink: 0, borderRadius: '8px', marginBottom: '0.25rem' }} alt="Sent image" />}
+            {m.type === 'video' && <video src={m.mediaUrl || ''} controls style={{ maxWidth: '100%', maxHeight: '250px', objectFit: 'contain', flexShrink: 0, borderRadius: '8px', marginBottom: '0.25rem' }} />}
             
             <div style={{ fontSize: '0.65rem', opacity: 0.5, marginTop: '0.25rem', textAlign: 'right' }}>
               {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
