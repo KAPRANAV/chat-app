@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { UserPlus, Sparkles } from 'lucide-react';
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = 'http://localhost:3001';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
 
 export default function Onboarding({ onProfileCreated }: { onProfileCreated: (p: any) => void }) {
   const [name, setName] = useState('');

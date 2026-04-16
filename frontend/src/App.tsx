@@ -5,7 +5,7 @@ import Onboarding from './components/Onboarding';
 import MainApp from './components/MainApp';
 import './index.css';
 
-const SOCKET_URL = 'http://localhost:3001';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
